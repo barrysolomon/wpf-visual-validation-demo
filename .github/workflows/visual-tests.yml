@@ -1,0 +1,64 @@
+name: Visual tests
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  applitools:
+    # WPF needs a Windows desktop session; GitHub-hosted Windows runners provide one.
+    runs-on: windows-latest
+    timeout-minutes: 20
+
+    env:
+      APPLITOOLS_API_KEY: ${{ secrets.APPLITOOLS_API_KEY }}
+      # Group every test in this run into one Eyes batch
+      APPLITOOLS_BATCH_ID: ${{ github.run_id }}-${{ github.run_attempt }}
+      APPLITOOLS_BATCH_NAME: ${{ github.workflow }} · ${{ github.ref_name }}
+      # Compare PR branches against the master baseline
+      APPLITOOLS_BRANCH: ${{ github.head_ref || github.ref_name }}
+      APPLITOOLS_PARENT_BRANCH: master
+      # Optional: lets Eyes fetch the Figma frame itself (see ComponentLabVisualTests.SetUp)
+      FIGMA_ACCESS_TOKEN: ${{ secrets.FIGMA_ACCESS_TOKEN }}
+      # Figma's image-render quota is small; keep fetched frames between runs (see cache steps)
+      APPLITOOLS_FIGMA_TEMP_PATH: ${{ runner.temp }}/applitools-figma-cache
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore Figma frame cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ runner.temp }}/applitools-figma-cache
+          key: figma-cache-${{ github.run_id }}
+          restore-keys: figma-cache-
+
+      - name: Build
+        run: dotnet build tests/WpfVisualValidationDemo.VisualTests -c Release
+
+      - name: Run visual tests
+        run: >
+          dotnet test tests/WpfVisualValidationDemo.VisualTests -c Release --no-build
+          --logger "trx;LogFileName=visual-tests.trx"
+          --logger "console;verbosity=normal"
+          --results-directory TestResults
+
+      - name: Save Figma frame cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ runner.temp }}/applitools-figma-cache
+          key: figma-cache-${{ github.run_id }}
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-test-results
+          path: TestResults

@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "applitools-mcp": {
+      "command": "cmd",
+      "args": ["/c", "npx", "-y", "@applitools/mcp@latest"],
+      "env": {
+        "APPLITOOLS_API_KEY": "${APPLITOOLS_API_KEY}",
+        "APPLITOOLS_READ_KEY": "${APPLITOOLS_READ_KEY}",
+        "APPLITOOLS_WRITE_KEY": "${APPLITOOLS_WRITE_KEY}"
+      }
+    },
+    "figma": {
+      "type": "http",
+      "url": "https://mcp.figma.com/mcp"
+    }
+  }
+}
