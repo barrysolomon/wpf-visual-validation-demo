@@ -1,9 +1,8 @@
 name: Visual tests
 
 on:
-  push:
-    branches: [master]
-  pull_request:
+  # Disabled: no automatic push/PR trigger. Run manually from the Actions tab
+  # (Actions -> Visual tests -> Run workflow) when you want it to execute.
   workflow_dispatch:
 
 jobs:
