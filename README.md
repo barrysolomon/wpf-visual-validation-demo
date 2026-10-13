@@ -128,8 +128,8 @@ Code); accepting a step makes that implementation the baseline from then on.
 interactive desktop session WPF needs, at 1920×1080 / 100 %). It builds in Release, runs
 `dotnet test` with a TRX logger, and uploads `TestResults/` as an artifact even on failure.
 
-It has no automatic trigger (`workflow_dispatch` only) — run it manually from the Actions tab
-(Actions → Visual tests → Run workflow) or with the GitHub CLI:
+It runs automatically on every push to `master`, and can also be run manually from the Actions
+tab (Actions → Visual tests → Run workflow) or with the GitHub CLI:
 
 ```
 gh workflow run visual-tests.yml
