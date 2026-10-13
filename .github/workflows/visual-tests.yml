@@ -21,8 +21,6 @@ jobs:
       APPLITOOLS_PARENT_BRANCH: master
       # Optional: lets Eyes fetch the Figma frame itself (see ComponentLabVisualTests.SetUp)
       FIGMA_ACCESS_TOKEN: ${{ secrets.FIGMA_ACCESS_TOKEN }}
-      # Figma's image-render quota is small; keep fetched frames between runs (see cache steps)
-      APPLITOOLS_FIGMA_TEMP_PATH: ${{ runner.temp }}/applitools-figma-cache
 
     steps:
       - uses: actions/checkout@v4
@@ -42,6 +40,9 @@ jobs:
         run: dotnet build tests/WpfVisualValidationDemo.VisualTests -c Release
 
       - name: Run visual tests
+        env:
+          # Figma's image-render quota is small; keep fetched frames between runs (see cache steps)
+          APPLITOOLS_FIGMA_TEMP_PATH: ${{ runner.temp }}/applitools-figma-cache
         run: >
           dotnet test tests/WpfVisualValidationDemo.VisualTests -c Release --no-build
           --logger "trx;LogFileName=visual-tests.trx"
