@@ -39,6 +39,11 @@ jobs:
       - name: Build
         run: dotnet build tests/WpfVisualValidationDemo.VisualTests -c Release
 
+      - name: Ensure Figma cache directory exists
+        # The Eyes SDK's Figma fetch writes its cache file without creating the
+        # directory first, so on a cache miss (first run) it fails with ENOENT.
+        run: New-Item -ItemType Directory -Force -Path "${{ runner.temp }}/applitools-figma-cache" | Out-Null
+
       - name: Run visual tests
         env:
           # Figma's image-render quota is small; keep fetched frames between runs (see cache steps)
