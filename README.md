@@ -1,12 +1,12 @@
 # WPF Visual Validation Demo
 
-A small WPF app ("Northstar Component Lab") plus an Applitools Eyes test that validates the
+A small WPF app ("Insuracare Component Lab") plus an Applitools Eyes test that validates the
 running app against a **Figma design** rather than against an earlier screenshot of itself.
 
 ```
 MainWindow.xaml / App.xaml            The app: a control gallery (buttons, combos, inputs, toggles)
 design/
-  Northstar Component Lab - ....fig   Original Figma source
+  Insuracare Component Lab - ....fig  Original Figma source
   control-gallery.figma.png           Export of the Figma "Control gallery" frame (1184×781)
 tests/WpfVisualValidationDemo.VisualTests/
   AppSession.cs                       Launches the exe, captures its client area with PrintWindow
@@ -111,6 +111,12 @@ Then run the visual test:
 dotnet test tests/WpfVisualValidationDemo.VisualTests
 ```
 
+Or just the Figma-comparison test on its own:
+
+```
+dotnet test tests/WpfVisualValidationDemo.VisualTests --filter Name~ControlGallery_MatchesBaseline
+```
+
 The output contains the Eyes results URL. Expect mismatches on the first run — mostly text
 rendering (Inter vs Segoe UI) plus any real layout deviations from the design. Review them in
 the dashboard (or with the MCP server's `eyes_inspect_*` / `eyes_resolve_*` tools from Claude
@@ -118,10 +124,16 @@ Code); accepting a step makes that implementation the baseline from then on.
 
 ### 7. GitHub Actions
 
-`.github/workflows/visual-tests.yml` runs the test on `windows-latest` (which has the interactive
-desktop session WPF needs, at 1920×1080 / 100 %) on every push to `master`, every pull request,
-and on demand. It builds in Release, runs `dotnet test` with a TRX logger, and uploads
-`TestResults/` as an artifact even on failure.
+`.github/workflows/visual-tests.yml` runs the test suite on `windows-latest` (which has the
+interactive desktop session WPF needs, at 1920×1080 / 100 %). It builds in Release, runs
+`dotnet test` with a TRX logger, and uploads `TestResults/` as an artifact even on failure.
+
+It has no automatic trigger (`workflow_dispatch` only) — run it manually from the Actions tab
+(Actions → Visual tests → Run workflow) or with the GitHub CLI:
+
+```
+gh workflow run visual-tests.yml
+```
 
 Repository secrets:
 
@@ -137,7 +149,7 @@ baseline.
 ## How it works
 
 1. **Design in Figma.** The Control gallery screen lives in Figma:
-   <https://www.figma.com/design/ezwnpJMHvW5YqQNyr5vGRJ/Northstar-Component-Lab?node-id=3-2>.
+   <https://www.figma.com/design/ezwnpJMHvW5YqQNyr5vGRJ/Insuracare-Component-Lab?node-id=3-2>.
    The frame is exactly **1184×781** — the app's client area (its 1200×820 window minus
    Windows chrome) at 100 % DPI — so Eyes compares like for like. It was generated from the
    XAML with the Figma MCP server; Segoe UI is not available in Figma, so the design uses Inter.

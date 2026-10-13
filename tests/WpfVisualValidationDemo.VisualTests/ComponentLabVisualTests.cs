@@ -17,7 +17,7 @@ public class ComponentLabVisualTests
     /// Figma frame "Control gallery" (1184×781, the app's client area at 100% DPI).
     /// Source of truth for the design; design/control-gallery.figma.png is an export of it.
     private const string ControlGalleryDesignUrl =
-        "https://www.figma.com/design/ezwnpJMHvW5YqQNyr5vGRJ/Northstar-Component-Lab-%E2%80%94-Control-Gallery?node-id=3-2";
+        "https://www.figma.com/design/ezwnpJMHvW5YqQNyr5vGRJ/Insuracare-Component-Lab-%E2%80%94-Control-Gallery?node-id=3-2";
 
     private Eyes _eyes = null!;
     private AppSession? _app;
